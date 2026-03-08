@@ -9,6 +9,7 @@ export interface Question {
   options: string[];
   correctAnswer: number; // 0-3
   explanation: string;
+  explanationDiagramSvg?: string;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   type: 'Conceptual' | 'Numerical' | 'Assertion-Reason';
 }
@@ -27,7 +28,6 @@ export const PHYSICS_TOPICS: Record<string, string[]> = {
     "Einstein’s Photoelectric Equation",
     "Bohr Model of Hydrogen Atom",
     "Energy Levels & Hydrogen Spectrum",
-    "Radioactive Decay (Alpha, Beta, Gamma)",
     "Half-life and Mean life",
     "Nuclear Fission & Fusion",
     "Binding Energy and Mass Defect"
@@ -40,7 +40,6 @@ export const PHYSICS_TOPICS: Record<string, string[]> = {
     "Forward Bias & Reverse Bias",
     "Zener Diode and Voltage Regulation",
     "Rectifiers (Half-wave & Full-wave basic idea)",
-    "Transistor basics",
     "Logic Gates (AND, OR, NOT, NAND, NOR)"
   ],
   "Current Electricity": [

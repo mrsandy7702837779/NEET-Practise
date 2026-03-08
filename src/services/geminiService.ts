@@ -27,9 +27,20 @@ export async function generateQuestions(
         model: "gemini-3-flash-preview",
         contents: `Generate ${count} NEET 2026 level mock test questions for ${subject}.
         ${topicContext ? `Focus on these areas: ${topicContext}.` : ''}
+        CRITICAL: Strictly adhere to the updated NEET 2026 syllabus. Do NOT include any questions from removed topics. 
+        For Chemistry, explicitly EXCLUDE: "s-block elements", "Solid State", "States of Matter", "Surface Chemistry", "Metallurgy", "Hydrogen", "Environmental Chemistry", "Polymers", and "Chemistry in Everyday Life".
+        For Physics, explicitly EXCLUDE: "Radioactivity (alpha, beta, gamma decay)", "Transistors", "Communication Systems", "Earth's Magnetism", "Doppler Effect", and "Resolving Power of Optical Instruments".
+        For Biology, explicitly EXCLUDE: "Transport in Plants", "Mineral Nutrition", "Digestion and Absorption", "Reproduction in Organisms", "Strategies for Enhancement in Food Production", and "Environmental Issues".
+        
+        ROLE & PATTERN: Think exactly like the NEET 2026 question paper makers. Generate questions that strictly follow previous NEET exam patterns. Include variations of the most frequently asked questions from past NEET papers.
         Each question must be unique, high-quality, and follow the NCERT pattern.
         Provide a mix of Conceptual, Numerical, and Assertion-Reason types.
-        Difficulty should be a mix of Easy, Medium, and Hard.`,
+        Difficulty should be a mix of Easy, Medium, and Hard.
+        
+        IMPORTANT FORMATTING RULE: If you use LaTeX formatting or any backslashes, you MUST double-escape them in the JSON string (e.g., use \\\\alpha instead of \\alpha, and \\\\frac instead of \\frac) to avoid JSON parsing errors.
+        Use proper LaTeX math mode for all formulas, units, and symbols. Use $...$ for inline math (e.g., $5 \\\\Omega$, $10 \\\\mu F$, $v = u + at$) and $$...$$ for block math. Do not use plain text for symbols like omega or mu.
+        
+        VISUAL EXPLANATION: If a diagram helps explain the answer (e.g., circuit diagrams, biological processes, chemical structures, free body diagrams), provide a clean, valid SVG code string in the \`explanationDiagramSvg\` field. The SVG must be responsive (use viewBox) and visually appealing. Do not include markdown formatting like \`\`\`svg in the string, just the raw <svg> tag.`,
         config: {
           responseMimeType: "application/json",
           responseSchema: {
@@ -45,6 +56,7 @@ export async function generateQuestions(
                 },
                 correctAnswer: { type: Type.INTEGER, description: "Index 0-3" },
                 explanation: { type: Type.STRING },
+                explanationDiagramSvg: { type: Type.STRING, description: "Optional raw SVG code string for visual explanation" },
                 difficulty: { type: Type.STRING, description: "Easy, Medium, or Hard" },
                 type: { type: Type.STRING, description: "Conceptual, Numerical, or Assertion-Reason" },
                 section: { type: Type.STRING, description: "Sub-section or chapter name" }

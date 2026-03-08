@@ -1,5 +1,5 @@
 {
-  "name": "Remix: NEET 2026 Mock Test Practice",
-  "description": "A comprehensive NEET exam simulation platform with subject-wise tests, real-time timers, and detailed performance analytics.",
+  "name": "NEET 2026 Chemistry Question Generator",
+  "description": "Generate practice questions strictly based on the NEET 2026 Chemistry syllabus.",
   "requestFramePermissions": []
 }

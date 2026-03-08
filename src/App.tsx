@@ -25,6 +25,17 @@ import {
 } from 'lucide-react';
 import { generateQuestions } from './services/geminiService';
 import { Question, PHYSICS_CHAPTERS, CHEMISTRY_SECTIONS, BIOLOGY_SECTIONS, PHYSICS_TOPICS } from './types';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+
+const MarkdownRenderer = ({ content, className = '' }: { content: string, className?: string }) => (
+  <div className={`markdown-body ${className}`}>
+    <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+      {content}
+    </ReactMarkdown>
+  </div>
+);
 
 type AppState = 'LANDING' | 'SELECTION' | 'EXAM' | 'RESULT' | 'SAVED_QUESTIONS' | 'GENERATING';
 
@@ -496,7 +507,7 @@ export default function App() {
               </div>
 
               <div className="text-xl text-slate-800 font-medium leading-relaxed whitespace-pre-wrap">
-                {currentQ.question}
+                <MarkdownRenderer content={currentQ.question} />
               </div>
 
               <div className="space-y-3">
@@ -517,7 +528,7 @@ export default function App() {
                     }`}>
                       {String.fromCharCode(65 + idx)}
                     </span>
-                    <span className="text-slate-700">{opt}</span>
+                    <span className="text-slate-700 w-full"><MarkdownRenderer content={opt} /></span>
                   </button>
                 ))}
               </div>
@@ -794,7 +805,7 @@ export default function App() {
                             {isUnattempted ? 'Unattempted' : isCorrect ? 'Correct' : 'Incorrect'}
                           </span>
                         </div>
-                        <p className="text-slate-800 font-medium">{q.question}</p>
+                        <div className="text-slate-800 font-medium"><MarkdownRenderer content={q.question} /></div>
                       </div>
                       <button 
                         onClick={() => toggleSaveQuestion(q.id, q)}
@@ -814,21 +825,27 @@ export default function App() {
                             'border-slate-100 text-slate-500'
                           }`}
                         >
-                          <span className={`w-6 h-6 rounded flex items-center justify-center text-xs ${
+                          <span className={`w-6 h-6 rounded flex items-center justify-center text-xs shrink-0 ${
                             oIdx === q.correctAnswer ? 'bg-emerald-500 text-white' :
                             oIdx === ans?.selectedOption && !isCorrect ? 'bg-red-500 text-white' :
                             'bg-slate-100 text-slate-400'
                           }`}>
                             {String.fromCharCode(65 + oIdx)}
                           </span>
-                          {opt}
+                          <div className="flex-1 overflow-hidden"><MarkdownRenderer content={opt} /></div>
                         </div>
                       ))}
                     </div>
 
                     <div className="bg-slate-50 p-4 rounded-2xl space-y-2">
                       <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Explanation</div>
-                      <p className="text-sm text-slate-600 leading-relaxed">{q.explanation}</p>
+                      <div className="text-sm text-slate-600 leading-relaxed"><MarkdownRenderer content={q.explanation} /></div>
+                      {q.explanationDiagramSvg && (
+                        <div 
+                          className="mt-4 flex justify-center w-full max-w-full overflow-hidden rounded-xl bg-white p-4 border border-slate-200"
+                          dangerouslySetInnerHTML={{ __html: q.explanationDiagramSvg }}
+                        />
+                      )}
                     </div>
                   </div>
                 );
@@ -979,7 +996,7 @@ export default function App() {
                       </button>
                     </div>
 
-                    <p className="text-lg text-slate-800 font-medium">{q.question}</p>
+                    <div className="text-lg text-slate-800 font-medium"><MarkdownRenderer content={q.question} /></div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {q.options.map((opt, oIdx) => (
@@ -989,19 +1006,25 @@ export default function App() {
                             oIdx === q.correctAnswer ? 'border-emerald-500 bg-emerald-50 text-emerald-700 font-bold' : 'border-slate-100 text-slate-500'
                           }`}
                         >
-                          <span className={`w-6 h-6 rounded flex items-center justify-center text-xs ${
+                          <span className={`w-6 h-6 rounded flex items-center justify-center text-xs shrink-0 ${
                             oIdx === q.correctAnswer ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400'
                           }`}>
                             {String.fromCharCode(65 + oIdx)}
                           </span>
-                          {opt}
+                          <div className="flex-1 overflow-hidden"><MarkdownRenderer content={opt} /></div>
                         </div>
                       ))}
                     </div>
 
                     <div className="bg-slate-50 p-4 rounded-2xl space-y-2">
                       <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Explanation</div>
-                      <p className="text-sm text-slate-600 leading-relaxed">{q.explanation}</p>
+                      <div className="text-sm text-slate-600 leading-relaxed"><MarkdownRenderer content={q.explanation} /></div>
+                      {q.explanationDiagramSvg && (
+                        <div 
+                          className="mt-4 flex justify-center w-full max-w-full overflow-hidden rounded-xl bg-white p-4 border border-slate-200"
+                          dangerouslySetInnerHTML={{ __html: q.explanationDiagramSvg }}
+                        />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1028,6 +1051,14 @@ export default function App() {
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: #cbd5e1;
+        }
+        .markdown-body p {
+          margin: 0;
+          display: inline;
+        }
+        .markdown-body p:not(:last-child) {
+          display: block;
+          margin-bottom: 0.5rem;
         }
       `}</style>
       
