@@ -23,8 +23,10 @@ export async function generateQuestions(
         topicContext = subSections.join(', ');
       }
 
+      const modelName = attempt === maxRetries ? "gemini-2.5-flash" : "gemini-3-flash-preview";
+
       const model = ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: modelName,
         contents: `Generate ${count} NEET 2026 level mock test questions for ${subject}.
         ${topicContext ? `Focus on these areas: ${topicContext}.` : ''}
         CRITICAL: Strictly adhere to the updated NEET 2026 syllabus. Do NOT include any questions from removed topics. 
